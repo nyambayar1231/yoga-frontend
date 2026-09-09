@@ -1,5 +1,6 @@
-import { useSession } from '@/features/auth/use-session'
+import { Outlet, useLocation } from 'react-router'
 import AppSidebar from '@/components/AppSidebar'
+import { NAV_ITEMS } from '@/config/navigation'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,
@@ -7,8 +8,9 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 
-function DashboardPage() {
-  const { data: user } = useSession()
+function DashboardLayout() {
+  const { pathname } = useLocation()
+  const current = NAV_ITEMS.find((item) => item.to === pathname)
 
   return (
     <SidebarProvider>
@@ -22,17 +24,15 @@ function DashboardPage() {
               self-stretch after self-center at equal specificity, so the
               override has to be important to land. */}
           <Separator orientation="vertical" className="mr-2 h-4 self-center!" />
-          <h1 className="font-heading text-xs font-medium">Нүүр</h1>
+          <span className="text-xs text-muted-foreground">
+            {current?.label}
+          </span>
         </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <p className="text-xs/relaxed text-muted-foreground">
-            Тавтай морил{user ? `, ${user.email}` : ''}.
-          </p>
-        </div>
+        <Outlet />
       </SidebarInset>
     </SidebarProvider>
   )
 }
 
-export default DashboardPage
+export default DashboardLayout
