@@ -29,6 +29,16 @@ export function useSession() {
   return useQuery(sessionQueryOptions)
 }
 
+/**
+ * Whether the signed-in user may perform admin-only writes. The backend is
+ * still the enforcement point — this only avoids offering a button that would
+ * come back 403.
+ */
+export function useIsAdmin(): boolean {
+  const { data: user } = useSession()
+  return user?.role === 'admin'
+}
+
 export function useLogout() {
   const queryClient = useQueryClient()
 

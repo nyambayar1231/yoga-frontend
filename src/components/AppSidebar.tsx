@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronsUpDown, Flower2 } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
-import { NAV_ITEMS } from '@/config/navigation'
+import { navItemsFor } from '@/config/navigation'
 import { useLogout, useSession } from '@/features/auth/use-session'
 import LogoutDialog from '@/features/auth/LogoutDialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -22,6 +22,7 @@ function AppSidebar() {
   const { data: user } = useSession()
   const logout = useLogout()
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const navItems = navItemsFor(user?.role)
 
   return (
     <Sidebar>
@@ -38,7 +39,7 @@ function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+              {navItems.map(({ to, label, icon: Icon }) => (
                 <SidebarMenuItem key={to}>
                   <SidebarMenuButton
                     isActive={pathname === to}

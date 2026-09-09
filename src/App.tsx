@@ -4,7 +4,10 @@ import RequireGuest from '@/routes/RequireGuest'
 import DashboardLayout from '@/layouts/DashboardLayout'
 import HomePage from '@/pages/HomePage'
 import LoginPage from '@/pages/LoginPage'
-import UsersPage from '@/pages/UsersPage'
+import ClassTypesPage from '@/pages/ClassTypesPage'
+import SchedulePage from '@/pages/SchedulePage'
+import MembersPage from '@/pages/MembersPage'
+import InstructorsPage from '@/pages/InstructorsPage'
 
 function App() {
   return (
@@ -16,7 +19,10 @@ function App() {
       <Route element={<RequireAuth />}>
         <Route element={<DashboardLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/users" element={<UsersPage />} />
+          <Route path="/instructors" element={<InstructorsPage />} />
+          <Route path="/members" element={<MembersPage />} />
+          <Route path="/schedule" element={<SchedulePage />} />
+          <Route path="/class-types" element={<ClassTypesPage />} />
         </Route>
       </Route>
 
