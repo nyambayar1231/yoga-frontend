@@ -28,3 +28,13 @@ export function login(input: LoginInput): Promise<LoginResponse> {
     body: JSON.stringify(input),
   })
 }
+
+/** GET /api/auth/me — re-reads the user so role changes take effect. */
+export function fetchCurrentUser(): Promise<{ user: AuthUser }> {
+  return apiFetch<{ user: AuthUser }>('/auth/me')
+}
+
+/** POST /api/auth/logout — clears the auth cookie. */
+export function logout(): Promise<{ ok: boolean }> {
+  return apiFetch<{ ok: boolean }>('/auth/logout', { method: 'POST' })
+}

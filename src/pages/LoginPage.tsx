@@ -109,12 +109,6 @@ function LoginPage() {
               </p>
             ) : null}
 
-            {login.isSuccess ? (
-              <p role="status" className="text-xs/relaxed text-muted-foreground">
-                Амжилттай нэвтэрлээ. ({login.data.user.email})
-              </p>
-            ) : null}
-
             <Button
               type="submit"
               size="lg"

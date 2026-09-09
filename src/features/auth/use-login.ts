@@ -1,9 +1,19 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ApiError } from '@/lib/api'
 import { login } from './auth.api'
+import { authKeys } from './use-session'
 
 export function useLogin() {
-  return useMutation({ mutationFn: login })
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: login,
+    // The login response already carries the user, so seed the session cache
+    // rather than making the guard re-fetch /auth/me.
+    onSuccess: ({ user }) => {
+      queryClient.setQueryData(authKeys.session, user)
+    },
+  })
 }
 
 /** Turns a failed login into a message we can show the user. */
