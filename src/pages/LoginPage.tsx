@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { loginErrorMessage, useLogin } from '@/features/auth/use-login'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -15,19 +17,25 @@ function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
+  const [formError, setFormError] = useState('')
 
-  function handleSubmit(event) {
+  const login = useLogin()
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     if (!email.trim() || !password) {
-      setError('Имэйл хаяг болон нууц үгээ бүрэн оруулна уу.')
+      setFormError('Имэйл хаяг болон нууц үгээ бүрэн оруулна уу.')
       return
     }
 
-    setError('')
-    // TODO: нэвтрэх API-тай холбох
+    setFormError('')
+    login.mutate({ email: email.trim(), password })
   }
+
+  // A client-side complaint wins over a stale error from the previous attempt.
+  const errorMessage =
+    formError || (login.error ? loginErrorMessage(login.error) : '')
 
   return (
     <main className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted/40 p-6">
@@ -52,7 +60,8 @@ function LoginPage() {
                 placeholder="tany@mail.mn"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                aria-invalid={Boolean(error)}
+                disabled={login.isPending}
+                aria-invalid={Boolean(errorMessage)}
                 className="h-9"
               />
             </div>
@@ -75,7 +84,8 @@ function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  aria-invalid={Boolean(error)}
+                  disabled={login.isPending}
+                  aria-invalid={Boolean(errorMessage)}
                   className="h-9 pr-9"
                 />
                 <Button
@@ -93,14 +103,25 @@ function LoginPage() {
               </div>
             </div>
 
-            {error ? (
+            {errorMessage ? (
               <p role="alert" className="text-xs/relaxed text-destructive">
-                {error}
+                {errorMessage}
               </p>
             ) : null}
 
-            <Button type="submit" size="lg" className="h-9 w-full">
-              Нэвтрэх
+            {login.isSuccess ? (
+              <p role="status" className="text-xs/relaxed text-muted-foreground">
+                Амжилттай нэвтэрлээ. ({login.data.user.email})
+              </p>
+            ) : null}
+
+            <Button
+              type="submit"
+              size="lg"
+              disabled={login.isPending}
+              className="h-9 w-full"
+            >
+              {login.isPending ? 'Нэвтэрч байна…' : 'Нэвтрэх'}
             </Button>
           </form>
         </CardContent>
