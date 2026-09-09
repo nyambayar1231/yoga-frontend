@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react'
-import { useUsers } from '@/features/user/use-users'
+import { formatDate, roleLabel, useUsers } from '@/features/user/use-users'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -11,10 +12,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+const COLUMN_COUNT = 3
 const SKELETON_ROWS = [0, 1, 2]
 
 function UsersPage() {
-  const { data: users, isPending, isError } = useUsers()
+  const { data, isPending, isError } = useUsers()
+  const users = data?.users
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -39,6 +42,8 @@ function UsersPage() {
           <TableHeader>
             <TableRow className="hover:bg-transparent">
               <TableHead className="h-9 px-4">Имэйл</TableHead>
+              <TableHead className="h-9 px-4 w-32">Эрх</TableHead>
+              <TableHead className="h-9 px-4 w-36">Үүссэн огноо</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -48,11 +53,20 @@ function UsersPage() {
                   <TableCell className="px-4 py-2.5">
                     <Skeleton className="h-3.5 w-48" />
                   </TableCell>
+                  <TableCell className="px-4 py-2.5">
+                    <Skeleton className="h-3.5 w-14" />
+                  </TableCell>
+                  <TableCell className="px-4 py-2.5">
+                    <Skeleton className="h-3.5 w-20" />
+                  </TableCell>
                 </TableRow>
               ))
             ) : isError ? (
               <TableRow className="hover:bg-transparent">
-                <TableCell className="px-4 py-8 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={COLUMN_COUNT}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   Хэрэглэгчийн жагсаалтыг татаж чадсангүй.
                 </TableCell>
               </TableRow>
@@ -62,11 +76,26 @@ function UsersPage() {
                   <TableCell className="px-4 py-2.5 font-medium">
                     {user.email}
                   </TableCell>
+                  <TableCell className="px-4 py-2.5">
+                    <Badge
+                      variant={user.role === 'admin' ? 'secondary' : 'outline'}
+                    >
+                      {roleLabel(user.role)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="px-4 py-2.5 text-muted-foreground tabular-nums">
+                    <time dateTime={user.createdAt}>
+                      {formatDate(user.createdAt)}
+                    </time>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow className="hover:bg-transparent">
-                <TableCell className="px-4 py-8 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={COLUMN_COUNT}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   Хэрэглэгч бүртгэгдээгүй байна.
                 </TableCell>
               </TableRow>

@@ -6,14 +6,21 @@ export interface User {
   email: string
   role: UserRole
   isActive: boolean
+  /** ISO 8601 timestamp. */
+  createdAt: string
+  /** ISO 8601 timestamp. */
+  updatedAt: string
 }
 
-/**
- * GET /api/users
- *
- * Note: yoga-cms-backend has `listUsers()` in user.service.ts but does not
- * route it yet, so this 404s until a user controller is mounted.
- */
-export function fetchUsers(): Promise<{ users: User[] }> {
-  return apiFetch<{ users: User[] }>('/users')
+export interface UsersResponse {
+  users: User[]
+  /** Full match count, so a capped page is detectable. */
+  total: number
+  limit: number
+  skip: number
+}
+
+/** GET /api/users — requires a valid auth cookie. */
+export function fetchUsers(): Promise<UsersResponse> {
+  return apiFetch<UsersResponse>('/users')
 }
