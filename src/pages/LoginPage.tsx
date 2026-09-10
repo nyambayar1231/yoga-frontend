@@ -39,7 +39,7 @@ function LoginPage() {
 
   return (
     <main className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted/40 p-6">
-      <p className="font-heading text-sm font-medium tracking-tight">Yoga CMS</p>
+      <p className="font-heading text-sm font-medium tracking-tight">School CMS</p>
 
       <Card className="w-full max-w-sm [--card-spacing:--spacing(6)]">
         <CardHeader>
