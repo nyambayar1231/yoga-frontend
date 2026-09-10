@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import CreateStudentDialog from '@/features/student/CreateStudentDialog'
+import SendEmailDialog from '@/features/student/SendEmailDialog'
+import type { Student } from '@/features/student/student.api'
 import { useStudents } from '@/features/student/use-students'
 import { formatDate } from '@/lib/date'
 import { Button } from '@/components/ui/button'
@@ -20,6 +22,14 @@ const SKELETON_ROWS = [0, 1, 2]
 function StudentsPage() {
   const { data: students, isPending, isError } = useStudents()
   const [createOpen, setCreateOpen] = useState(false)
+  // Kept after close so the dialog keeps its recipient while it animates out.
+  const [emailStudent, setEmailStudent] = useState<Student | null>(null)
+  const [emailOpen, setEmailOpen] = useState(false)
+
+  function openEmailDialog(student: Student) {
+    setEmailStudent(student)
+    setEmailOpen(true)
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -74,7 +84,11 @@ function StudentsPage() {
               </TableRow>
             ) : students && students.length > 0 ? (
               students.map((student) => (
-                <TableRow key={student.id}>
+                <TableRow
+                  key={student.id}
+                  className="cursor-pointer"
+                  onClick={() => openEmailDialog(student)}
+                >
                   <TableCell className="px-4 py-2.5 font-medium">
                     {student.fullName}
                   </TableCell>
@@ -105,6 +119,12 @@ function StudentsPage() {
       </div>
 
       <CreateStudentDialog open={createOpen} onOpenChange={setCreateOpen} />
+
+      <SendEmailDialog
+        student={emailStudent}
+        open={emailOpen}
+        onOpenChange={setEmailOpen}
+      />
     </div>
   )
 }

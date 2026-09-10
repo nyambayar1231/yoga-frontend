@@ -21,6 +21,20 @@ export function useUsers(filter: UsersFilter = {}) {
   return useQuery(usersQueryOptions(filter))
 }
 
+/**
+ * The login attached to a student profile, or null when they have none. Anything
+ * addressed to a student — an email, a password reset — needs the account id,
+ * and the profile does not carry it.
+ */
+export function useStudentAccount(studentId: string | null, enabled = true) {
+  return useQuery({
+    ...usersQueryOptions({ role: 'student', studentId: studentId ?? undefined, limit: 1 }),
+    // One profile, one login: the list is a lookup, not a page to render.
+    select: (page) => page.data[0] ?? null,
+    enabled: enabled && studentId !== null,
+  })
+}
+
 const ROLE_LABELS: Record<string, string> = {
   admin: 'админ',
   teacher: 'багш',
