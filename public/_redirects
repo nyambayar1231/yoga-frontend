@@ -1,4 +1,0 @@
-# Client-side routes (/schedule, /members, …) must reach index.html
-# instead of 404ing on refresh or direct link. Pages Functions run first,
-# so /api/* is unaffected by this rule.
-/*  /index.html  200
