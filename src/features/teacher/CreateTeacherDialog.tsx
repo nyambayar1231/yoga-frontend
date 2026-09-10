@@ -8,8 +8,8 @@ import {
   isPasswordTooLong,
   passwordProblems,
 } from '@/lib/password'
-import { NAME_MAX_LENGTH } from './member.api'
-import { createMemberErrorMessage, useCreateMember } from './use-members'
+import { NAME_MAX_LENGTH } from './teacher.api'
+import { createTeacherErrorMessage, useCreateTeacher } from './use-teachers'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -32,8 +32,8 @@ function nameField(label: string) {
 }
 
 /**
- * What POST /api/members accepts, checked before the round-trip so a typo does
- * not cost one. The rules mirror the backend's; the wording is ours.
+ * What POST /api/teachers accepts, checked before the round-trip so a typo
+ * does not cost one. The rules mirror the backend's; the wording is ours.
  */
 const formSchema = z.object({
   firstName: nameField('Нэр'),
@@ -77,12 +77,12 @@ interface FormError {
   message: string
 }
 
-interface CreateMemberDialogProps {
+interface CreateTeacherDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
+function CreateTeacherDialog({ open, onOpenChange }: CreateTeacherDialogProps) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [accountEmail, setAccountEmail] = useState('')
@@ -91,12 +91,12 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
   // Which field to flag, so a bad email does not mark the password invalid too.
   const [formError, setFormError] = useState<FormError | null>(null)
 
-  const createMember = useCreateMember()
+  const createTeacher = useCreateTeacher()
 
   /** Stale red borders should not outlive the edit that fixes them. */
   function clearErrors() {
     if (formError) setFormError(null)
-    if (createMember.error) createMember.reset()
+    if (createTeacher.error) createTeacher.reset()
   }
 
   function handleOpenChange(next: boolean) {
@@ -107,7 +107,7 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
       setPassword('')
       setShowPassword(false)
       setFormError(null)
-      createMember.reset()
+      createTeacher.reset()
     }
     onOpenChange(next)
   }
@@ -124,16 +124,16 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
     }
 
     setFormError(null)
-    createMember.mutate(result.data, { onSuccess: () => handleOpenChange(false) })
+    createTeacher.mutate(result.data, { onSuccess: () => handleOpenChange(false) })
   }
 
-  const serverError: FormError | null = createMember.error
+  const serverError: FormError | null = createTeacher.error
     ? {
         field:
-          createMember.error instanceof ApiError
-            ? FIELD_BY_CODE[createMember.error.code]
+          createTeacher.error instanceof ApiError
+            ? FIELD_BY_CODE[createTeacher.error.code]
             : undefined,
-        message: createMemberErrorMessage(createMember.error),
+        message: createTeacherErrorMessage(createTeacher.error),
       }
     : null
 
@@ -143,17 +143,17 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Гишүүн нэмэх</DialogTitle>
+          <DialogTitle>Багш нэмэх</DialogTitle>
           <DialogDescription>
-            Шинэ гишүүний мэдээллийг оруулна уу.
+            Шинэ багшийн мэдээллийг оруулна уу.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} noValidate className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="new-member-first-name">Нэр</Label>
+            <Label htmlFor="new-teacher-first-name">Нэр</Label>
             <Input
-              id="new-member-first-name"
+              id="new-teacher-first-name"
               autoComplete="off"
               placeholder="Оюунаа"
               maxLength={NAME_MAX_LENGTH}
@@ -162,16 +162,16 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
                 setFirstName(event.target.value)
                 clearErrors()
               }}
-              disabled={createMember.isPending}
+              disabled={createTeacher.isPending}
               aria-invalid={error?.field === 'firstName'}
               className="h-9"
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="new-member-last-name">Овог</Label>
+            <Label htmlFor="new-teacher-last-name">Овог</Label>
             <Input
-              id="new-member-last-name"
+              id="new-teacher-last-name"
               autoComplete="off"
               placeholder="Батбаяр"
               maxLength={NAME_MAX_LENGTH}
@@ -180,25 +180,25 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
                 setLastName(event.target.value)
                 clearErrors()
               }}
-              disabled={createMember.isPending}
+              disabled={createTeacher.isPending}
               aria-invalid={error?.field === 'lastName'}
               className="h-9"
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="new-member-email">Имэйл хаяг</Label>
+            <Label htmlFor="new-teacher-email">Имэйл хаяг</Label>
             <Input
-              id="new-member-email"
+              id="new-teacher-email"
               type="email"
               autoComplete="off"
-              placeholder="oyunaa@mail.mn"
+              placeholder="bagsh@surguuli.mn"
               value={accountEmail}
               onChange={(event) => {
                 setAccountEmail(event.target.value)
                 clearErrors()
               }}
-              disabled={createMember.isPending}
+              disabled={createTeacher.isPending}
               aria-invalid={error?.field === 'accountEmail'}
               className="h-9"
             />
@@ -206,14 +206,14 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
 
           <div className="grid gap-2">
             <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="new-member-password">Нууц үг</Label>
+              <Label htmlFor="new-teacher-password">Нууц үг</Label>
               <span className="text-[0.625rem]/relaxed text-muted-foreground">
                 Заавал биш
               </span>
             </div>
             <div className="relative">
               <Input
-                id="new-member-password"
+                id="new-teacher-password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="new-password"
                 value={password}
@@ -221,9 +221,9 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
                   setPassword(event.target.value)
                   clearErrors()
                 }}
-                disabled={createMember.isPending}
+                disabled={createTeacher.isPending}
                 aria-invalid={error?.field === 'password'}
-                aria-describedby="new-member-password-hint"
+                aria-describedby="new-teacher-password-hint"
                 className="h-9 pr-9"
               />
               <Button
@@ -240,11 +240,11 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
               </Button>
             </div>
             <p
-              id="new-member-password-hint"
+              id="new-teacher-password-hint"
               className="text-[0.625rem]/relaxed text-muted-foreground"
             >
               Дор хаяж 8 тэмдэгт, том, жижиг үсэг болон тусгай тэмдэгт агуулсан
-              байх. Хоосон орхивол гишүүн нэвтрэх боломжгүй.
+              байх. Хоосон орхивол багш нэвтрэх боломжгүй.
             </p>
           </div>
 
@@ -260,12 +260,12 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
               variant="outline"
               size="lg"
               onClick={() => handleOpenChange(false)}
-              disabled={createMember.isPending}
+              disabled={createTeacher.isPending}
             >
               Болих
             </Button>
-            <Button type="submit" size="lg" disabled={createMember.isPending}>
-              {createMember.isPending ? 'Нэмж байна…' : 'Нэмэх'}
+            <Button type="submit" size="lg" disabled={createTeacher.isPending}>
+              {createTeacher.isPending ? 'Нэмж байна…' : 'Нэмэх'}
             </Button>
           </DialogFooter>
         </form>
@@ -274,4 +274,4 @@ function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
   )
 }
 
-export default CreateMemberDialog
+export default CreateTeacherDialog

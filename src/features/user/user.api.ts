@@ -11,10 +11,10 @@ export const userSchema = z.object({
   email: z.string(),
   role: z.enum(USER_ROLES),
   isActive: z.boolean(),
-  /** Set only for role 'member'. */
-  memberId: z.string().nullish(),
-  /** Set only for roles 'instructor' and 'admin'. */
-  instructorId: z.string().nullish(),
+  /** Set only for role 'student'. */
+  studentId: z.string().nullish(),
+  /** Set only for role 'teacher'. */
+  teacherId: z.string().nullish(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 })
@@ -45,8 +45,8 @@ export function fetchUsers(filter: UsersFilter = {}): Promise<UsersPage> {
 
 /**
  * The body POST /api/users accepts. `role` is required, and the backend rejects
- * 'instructor' and 'member' unless the matching profile id comes with it — those
- * logins are created through POST /api/instructors and POST /api/members.
+ * 'teacher' and 'student' unless the matching profile id comes with it — those
+ * logins are created through POST /api/teachers and POST /api/students.
  */
 export const createUserSchema = z.object({
   // Normalise before validating: z.email() would reject a padded address

@@ -10,7 +10,11 @@ import {
 
 function DashboardLayout() {
   const { pathname } = useLocation()
-  const current = NAV_ITEMS.find((item) => item.to === pathname)
+  // A detail route like /classes/:id has no nav entry of its own; it belongs
+  // to the section whose path it extends.
+  const current = NAV_ITEMS.find(
+    (item) => pathname === item.to || pathname.startsWith(`${item.to}/`),
+  )
 
   return (
     <SidebarProvider>

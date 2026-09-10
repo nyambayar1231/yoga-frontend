@@ -1,4 +1,4 @@
-import { CalendarDays, House, Layers, UserRound, UsersRound } from 'lucide-react'
+import { GraduationCap, House, School, UsersRound } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { UserRole } from '@/features/auth/auth.api'
 
@@ -13,12 +13,12 @@ export interface NavItem {
 /** Single source of truth for the sidebar and the layout's title bar. */
 export const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Нүүр', icon: House },
-  { to: '/schedule', label: 'Хуваарь', icon: CalendarDays },
-  { to: '/class-types', label: 'Хичээлийн төрөл', icon: Layers },
-  // Reads /api/users, which is admin-only.
-  { to: '/instructors', label: 'Багш нар', icon: UserRound, roles: ['admin'] },
-  // Reads /api/members, which is staff-only.
-  { to: '/members', label: 'Гишүүд', icon: UsersRound, roles: ['admin', 'instructor'] },
+  // Reads /api/teachers — any signed-in user may look teachers up.
+  { to: '/teachers', label: 'Багш нар', icon: UsersRound },
+  // Reads /api/students, which is staff-only (admin or teacher).
+  { to: '/students', label: 'Сурагчид', icon: GraduationCap, roles: ['admin', 'teacher'] },
+  // Reads /api/classes — any signed-in user may look classes up.
+  { to: '/classes', label: 'Ангиуд', icon: School },
 ]
 
 /**

@@ -4,10 +4,10 @@ import RequireGuest from '@/routes/RequireGuest'
 import DashboardLayout from '@/layouts/DashboardLayout'
 import HomePage from '@/pages/HomePage'
 import LoginPage from '@/pages/LoginPage'
-import ClassTypesPage from '@/pages/ClassTypesPage'
-import SchedulePage from '@/pages/SchedulePage'
-import MembersPage from '@/pages/MembersPage'
-import InstructorsPage from '@/pages/InstructorsPage'
+import TeachersPage from '@/pages/TeachersPage'
+import StudentsPage from '@/pages/StudentsPage'
+import ClassesPage from '@/pages/ClassesPage'
+import ClassDetailPage from '@/pages/ClassDetailPage'
 
 function App() {
   return (
@@ -19,10 +19,10 @@ function App() {
       <Route element={<RequireAuth />}>
         <Route element={<DashboardLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/instructors" element={<InstructorsPage />} />
-          <Route path="/members" element={<MembersPage />} />
-          <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/class-types" element={<ClassTypesPage />} />
+          <Route path="/teachers" element={<TeachersPage />} />
+          <Route path="/students" element={<StudentsPage />} />
+          <Route path="/classes" element={<ClassesPage />} />
+          <Route path="/classes/:id" element={<ClassDetailPage />} />
         </Route>
       </Route>
 

@@ -23,8 +23,8 @@ export function useUsers(filter: UsersFilter = {}) {
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'админ',
-  instructor: 'багш',
-  member: 'гишүүн',
+  teacher: 'багш',
+  student: 'сурагч',
 }
 
 /** Falls back to the raw role so a new backend role is visible, not blank. */

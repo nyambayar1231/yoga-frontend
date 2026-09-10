@@ -1,6 +1,6 @@
 import { apiFetch } from '@/lib/api'
 
-export const USER_ROLES = ['admin', 'instructor', 'member'] as const
+export const USER_ROLES = ['admin', 'teacher', 'student'] as const
 
 export type UserRole = (typeof USER_ROLES)[number]
 

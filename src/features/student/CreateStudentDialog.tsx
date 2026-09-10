@@ -8,8 +8,8 @@ import {
   isPasswordTooLong,
   passwordProblems,
 } from '@/lib/password'
-import { NAME_MAX_LENGTH } from './instructor.api'
-import { createInstructorErrorMessage, useCreateInstructor } from './use-instructors'
+import { NAME_MAX_LENGTH } from './student.api'
+import { createStudentErrorMessage, useCreateStudent } from './use-students'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -32,7 +32,7 @@ function nameField(label: string) {
 }
 
 /**
- * What POST /api/instructors accepts, checked before the round-trip so a typo
+ * What POST /api/students accepts, checked before the round-trip so a typo
  * does not cost one. The rules mirror the backend's; the wording is ours.
  */
 const formSchema = z.object({
@@ -77,12 +77,12 @@ interface FormError {
   message: string
 }
 
-interface CreateInstructorDialogProps {
+interface CreateStudentDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogProps) {
+function CreateStudentDialog({ open, onOpenChange }: CreateStudentDialogProps) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [accountEmail, setAccountEmail] = useState('')
@@ -91,12 +91,12 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
   // Which field to flag, so a bad email does not mark the password invalid too.
   const [formError, setFormError] = useState<FormError | null>(null)
 
-  const createInstructor = useCreateInstructor()
+  const createStudent = useCreateStudent()
 
   /** Stale red borders should not outlive the edit that fixes them. */
   function clearErrors() {
     if (formError) setFormError(null)
-    if (createInstructor.error) createInstructor.reset()
+    if (createStudent.error) createStudent.reset()
   }
 
   function handleOpenChange(next: boolean) {
@@ -107,7 +107,7 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
       setPassword('')
       setShowPassword(false)
       setFormError(null)
-      createInstructor.reset()
+      createStudent.reset()
     }
     onOpenChange(next)
   }
@@ -124,16 +124,16 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
     }
 
     setFormError(null)
-    createInstructor.mutate(result.data, { onSuccess: () => handleOpenChange(false) })
+    createStudent.mutate(result.data, { onSuccess: () => handleOpenChange(false) })
   }
 
-  const serverError: FormError | null = createInstructor.error
+  const serverError: FormError | null = createStudent.error
     ? {
         field:
-          createInstructor.error instanceof ApiError
-            ? FIELD_BY_CODE[createInstructor.error.code]
+          createStudent.error instanceof ApiError
+            ? FIELD_BY_CODE[createStudent.error.code]
             : undefined,
-        message: createInstructorErrorMessage(createInstructor.error),
+        message: createStudentErrorMessage(createStudent.error),
       }
     : null
 
@@ -143,17 +143,17 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Багш нэмэх</DialogTitle>
+          <DialogTitle>Сурагч нэмэх</DialogTitle>
           <DialogDescription>
-            Шинэ багшийн мэдээллийг оруулна уу.
+            Шинэ сурагчийн мэдээллийг оруулна уу.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} noValidate className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="new-instructor-first-name">Нэр</Label>
+            <Label htmlFor="new-student-first-name">Нэр</Label>
             <Input
-              id="new-instructor-first-name"
+              id="new-student-first-name"
               autoComplete="off"
               placeholder="Оюунаа"
               maxLength={NAME_MAX_LENGTH}
@@ -162,16 +162,16 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
                 setFirstName(event.target.value)
                 clearErrors()
               }}
-              disabled={createInstructor.isPending}
+              disabled={createStudent.isPending}
               aria-invalid={error?.field === 'firstName'}
               className="h-9"
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="new-instructor-last-name">Овог</Label>
+            <Label htmlFor="new-student-last-name">Овог</Label>
             <Input
-              id="new-instructor-last-name"
+              id="new-student-last-name"
               autoComplete="off"
               placeholder="Батбаяр"
               maxLength={NAME_MAX_LENGTH}
@@ -180,25 +180,25 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
                 setLastName(event.target.value)
                 clearErrors()
               }}
-              disabled={createInstructor.isPending}
+              disabled={createStudent.isPending}
               aria-invalid={error?.field === 'lastName'}
               className="h-9"
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="new-instructor-email">Имэйл хаяг</Label>
+            <Label htmlFor="new-student-email">Имэйл хаяг</Label>
             <Input
-              id="new-instructor-email"
+              id="new-student-email"
               type="email"
               autoComplete="off"
-              placeholder="bagsh@yoga.mn"
+              placeholder="oyunaa@surguuli.mn"
               value={accountEmail}
               onChange={(event) => {
                 setAccountEmail(event.target.value)
                 clearErrors()
               }}
-              disabled={createInstructor.isPending}
+              disabled={createStudent.isPending}
               aria-invalid={error?.field === 'accountEmail'}
               className="h-9"
             />
@@ -206,14 +206,14 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
 
           <div className="grid gap-2">
             <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="new-instructor-password">Нууц үг</Label>
+              <Label htmlFor="new-student-password">Нууц үг</Label>
               <span className="text-[0.625rem]/relaxed text-muted-foreground">
                 Заавал биш
               </span>
             </div>
             <div className="relative">
               <Input
-                id="new-instructor-password"
+                id="new-student-password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="new-password"
                 value={password}
@@ -221,9 +221,9 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
                   setPassword(event.target.value)
                   clearErrors()
                 }}
-                disabled={createInstructor.isPending}
+                disabled={createStudent.isPending}
                 aria-invalid={error?.field === 'password'}
-                aria-describedby="new-instructor-password-hint"
+                aria-describedby="new-student-password-hint"
                 className="h-9 pr-9"
               />
               <Button
@@ -240,11 +240,11 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
               </Button>
             </div>
             <p
-              id="new-instructor-password-hint"
+              id="new-student-password-hint"
               className="text-[0.625rem]/relaxed text-muted-foreground"
             >
               Дор хаяж 8 тэмдэгт, том, жижиг үсэг болон тусгай тэмдэгт агуулсан
-              байх. Хоосон орхивол багш нэвтрэх боломжгүй.
+              байх. Хоосон орхивол сурагч нэвтрэх боломжгүй.
             </p>
           </div>
 
@@ -260,12 +260,12 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
               variant="outline"
               size="lg"
               onClick={() => handleOpenChange(false)}
-              disabled={createInstructor.isPending}
+              disabled={createStudent.isPending}
             >
               Болих
             </Button>
-            <Button type="submit" size="lg" disabled={createInstructor.isPending}>
-              {createInstructor.isPending ? 'Нэмж байна…' : 'Нэмэх'}
+            <Button type="submit" size="lg" disabled={createStudent.isPending}>
+              {createStudent.isPending ? 'Нэмж байна…' : 'Нэмэх'}
             </Button>
           </DialogFooter>
         </form>
@@ -274,4 +274,4 @@ function CreateInstructorDialog({ open, onOpenChange }: CreateInstructorDialogPr
   )
 }
 
-export default CreateInstructorDialog
+export default CreateStudentDialog

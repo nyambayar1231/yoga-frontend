@@ -30,7 +30,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-const ROLES = ['admin', 'instructor'] as const satisfies readonly UserRole[]
+// 'teacher' and 'student' logins need a profile to point at, so they are
+// created through POST /api/teachers and POST /api/students instead.
+const ROLES = ['admin'] as const satisfies readonly UserRole[]
 
 /**
  * What POST /api/users accepts, checked before the round-trip so a typo does
@@ -80,8 +82,6 @@ interface CreateUserDialogProps {
 function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  // 'admin' is the only role POST /api/users can create on its own: an
-  // instructor login needs an instructor profile to point at.
   const [role, setRole] = useState<UserRole>('admin')
   const [showPassword, setShowPassword] = useState(false)
   // Which field to flag, so a bad email does not mark the password invalid too.

@@ -1,34 +1,36 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiError, ApiSchemaError } from '@/lib/api'
-import { userKeys } from '@/features/user/use-users'
-import { createMember, fetchMembers } from './member.api'
+import { createTeacher, fetchTeachers } from './teacher.api'
 
-export const memberKeys = {
-  all: ['members'] as const,
-  list: () => [...memberKeys.all, 'list'] as const,
+export const teacherKeys = {
+  all: ['teachers'] as const,
+  list: () => [...teacherKeys.all, 'list'] as const,
 }
 
-export const membersQueryOptions = queryOptions({
-  queryKey: memberKeys.list(),
-  queryFn: fetchMembers,
+export const teachersQueryOptions = queryOptions({
+  queryKey: teacherKeys.list(),
+  queryFn: fetchTeachers,
   // The table only needs the rows; the envelope's paging fields are the
   // backend's, and nothing renders them yet.
   select: (page) => page.data,
 })
 
-export function useMembers() {
-  return useQuery(membersQueryOptions)
+/**
+ * Everyone with a teacher profile. An admin holds no teacher profile of their
+ * own — administration is not teaching — so, unlike the old yoga-studio
+ * instructor list, this needs no merge with `/api/users`.
+ */
+export function useTeachers() {
+  return useQuery(teachersQueryOptions)
 }
 
-export function useCreateMember() {
+export function useCreateTeacher() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: createMember,
+    mutationFn: createTeacher,
     onSuccess: () => {
-      // One call wrote both collections, so both lists are now stale.
-      queryClient.invalidateQueries({ queryKey: memberKeys.all })
-      queryClient.invalidateQueries({ queryKey: userKeys.all })
+      queryClient.invalidateQueries({ queryKey: teacherKeys.all })
     },
   })
 }
@@ -38,12 +40,12 @@ const MESSAGE_BY_CODE: Record<string, string> = {
   EMAIL_IN_USE: 'Энэ имэйл хаяг аль хэдийн бүртгэгдсэн байна.',
   WEAK_PASSWORD: 'Нууц үг шаардлага хангахгүй байна.',
   VALIDATION_FAILED: 'Оруулсан мэдээлэл зөв биш байна. Талбаруудыг шалгана уу.',
-  PROFILE_ALREADY_LINKED: 'Энэ гишүүн аль хэдийн нэвтрэх эрхтэй байна.',
+  PROFILE_ALREADY_LINKED: 'Энэ багш аль хэдийн нэвтрэх эрхтэй байна.',
 }
 
-export function createMemberErrorMessage(error: unknown): string {
+export function createTeacherErrorMessage(error: unknown): string {
   if (error instanceof ApiSchemaError) {
-    return 'Гишүүн үүссэн ч серверийн хариу таарсангүй. Жагсаалтыг шинэчилж шалгана уу.'
+    return 'Багш үүссэн ч серверийн хариу таарсангүй. Жагсаалтыг шинэчилж шалгана уу.'
   }
   if (!(error instanceof ApiError)) {
     return 'Сервертэй холбогдож чадсангүй. Интернэт холболтоо шалгана уу.'
@@ -58,7 +60,7 @@ export function createMemberErrorMessage(error: unknown): string {
     case 401:
       return 'Нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү.'
     case 403:
-      return 'Танд гишүүн нэмэх эрх байхгүй.'
+      return 'Танд багш нэмэх эрх байхгүй.'
     default:
       return 'Серверийн алдаа гарлаа. Дараа дахин оролдоно уу.'
   }

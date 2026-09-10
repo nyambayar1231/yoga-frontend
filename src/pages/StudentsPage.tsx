@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import CreateInstructorDialog from '@/features/instructor/CreateInstructorDialog'
-import { useTeachingStaff } from '@/features/instructor/use-instructors'
-import { roleLabel } from '@/features/user/use-users'
+import CreateStudentDialog from '@/features/student/CreateStudentDialog'
+import { useStudents } from '@/features/student/use-students'
 import { formatDate } from '@/lib/date'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -16,11 +14,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-const COLUMN_COUNT = 4
+const COLUMN_COUNT = 3
 const SKELETON_ROWS = [0, 1, 2]
 
-function InstructorsPage() {
-  const { data: staff, isPending, isError } = useTeachingStaff()
+function StudentsPage() {
+  const { data: students, isPending, isError } = useStudents()
   const [createOpen, setCreateOpen] = useState(false)
 
   return (
@@ -28,17 +26,16 @@ function InstructorsPage() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="grid gap-1">
           <h1 className="font-heading text-base font-medium tracking-tight">
-            Багш нар
+            Сурагчид
           </h1>
           <p className="text-xs/relaxed text-muted-foreground">
-            Хичээл заах боломжтой багш нар. Админ эрхтэй хүн багшаар хичээл
-            заах боломжтой тул энд мөн харагдана.
+            Сургуулийн сурагчдын жагсаалт.
           </p>
         </div>
 
         <Button size="lg" onClick={() => setCreateOpen(true)}>
           <Plus />
-          Багш нэмэх
+          Сурагч нэмэх
         </Button>
       </div>
 
@@ -47,8 +44,7 @@ function InstructorsPage() {
           <TableHeader>
             <TableRow className="hover:bg-transparent">
               <TableHead className="h-9 px-4">Нэр</TableHead>
-              <TableHead className="h-9 px-4">Имэйл</TableHead>
-              <TableHead className="h-9 w-32 px-4">Эрх</TableHead>
+              <TableHead className="h-9 w-36 px-4">Элссэн огноо</TableHead>
               <TableHead className="h-9 w-36 px-4">Үүссэн огноо</TableHead>
             </TableRow>
           </TableHeader>
@@ -60,10 +56,7 @@ function InstructorsPage() {
                     <Skeleton className="h-3.5 w-40" />
                   </TableCell>
                   <TableCell className="px-4 py-2.5">
-                    <Skeleton className="h-3.5 w-48" />
-                  </TableCell>
-                  <TableCell className="px-4 py-2.5">
-                    <Skeleton className="h-3.5 w-14" />
+                    <Skeleton className="h-3.5 w-20" />
                   </TableCell>
                   <TableCell className="px-4 py-2.5">
                     <Skeleton className="h-3.5 w-20" />
@@ -76,29 +69,23 @@ function InstructorsPage() {
                   colSpan={COLUMN_COUNT}
                   className="px-4 py-8 text-center text-muted-foreground"
                 >
-                  Багш нарын жагсаалтыг татаж чадсангүй.
+                  Сурагчдын жагсаалтыг татаж чадсангүй.
                 </TableCell>
               </TableRow>
-            ) : staff && staff.length > 0 ? (
-              staff.map((person) => (
-                <TableRow key={person.id}>
+            ) : students && students.length > 0 ? (
+              students.map((student) => (
+                <TableRow key={student.id}>
                   <TableCell className="px-4 py-2.5 font-medium">
-                    {/* An admin without an instructor profile has no name on file. */}
-                    {person.fullName ?? (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="px-4 py-2.5">{person.email}</TableCell>
-                  <TableCell className="px-4 py-2.5">
-                    <Badge
-                      variant={person.role === 'admin' ? 'secondary' : 'outline'}
-                    >
-                      {roleLabel(person.role)}
-                    </Badge>
+                    {student.fullName}
                   </TableCell>
                   <TableCell className="px-4 py-2.5 text-muted-foreground tabular-nums">
-                    <time dateTime={person.createdAt}>
-                      {formatDate(person.createdAt)}
+                    <time dateTime={student.enrolledAt}>
+                      {formatDate(student.enrolledAt)}
+                    </time>
+                  </TableCell>
+                  <TableCell className="px-4 py-2.5 text-muted-foreground tabular-nums">
+                    <time dateTime={student.createdAt}>
+                      {formatDate(student.createdAt)}
                     </time>
                   </TableCell>
                 </TableRow>
@@ -109,7 +96,7 @@ function InstructorsPage() {
                   colSpan={COLUMN_COUNT}
                   className="px-4 py-8 text-center text-muted-foreground"
                 >
-                  Багш бүртгэгдээгүй байна.
+                  Сурагч бүртгэгдээгүй байна.
                 </TableCell>
               </TableRow>
             )}
@@ -117,9 +104,9 @@ function InstructorsPage() {
         </Table>
       </div>
 
-      <CreateInstructorDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <CreateStudentDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   )
 }
 
-export default InstructorsPage
+export default StudentsPage
